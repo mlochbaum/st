@@ -2,6 +2,9 @@ st - simple terminal
 --------------------
 st is a simple virtual terminal emulator for X which sucks less.
 
+This version is forked from st 0.2.1, and uses xft, imported from
+the xft branch of st 0.1.1.
+
 
 Requirements
 ------------
