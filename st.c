@@ -565,6 +565,7 @@ selcopy(void) {
 
 void
 selnotify(XEvent *e) {
+	Atom XA_CLIPBOARD = XInternAtom(xw.dpy, "CLIPBOARD", 0);
 	ulong nitems, ofs, rem;
 	int format;
 	uchar *data;
@@ -572,7 +573,7 @@ selnotify(XEvent *e) {
 
 	ofs = 0;
 	do {
-		if(XGetWindowProperty(xw.dpy, xw.win, XA_PRIMARY, ofs, BUFSIZ/4,
+		if(XGetWindowProperty(xw.dpy, xw.win, XA_CLIPBOARD, ofs, BUFSIZ/4,
 					False, AnyPropertyType, &type, &format,
 					&nitems, &rem, &data)) {
 			fprintf(stderr, "Clipboard allocation failed\n");
@@ -587,7 +588,8 @@ selnotify(XEvent *e) {
 
 void
 selpaste() {
-	XConvertSelection(xw.dpy, XA_PRIMARY, sel.xtarget, XA_PRIMARY, xw.win, CurrentTime);
+	Atom XA_CLIPBOARD = XInternAtom(xw.dpy, "CLIPBOARD", 0);
+	XConvertSelection(xw.dpy, XA_CLIPBOARD, sel.xtarget, XA_CLIPBOARD, xw.win, CurrentTime);
 }
 
 void
@@ -627,16 +629,12 @@ selrequest(XEvent *e) {
 
 void
 xsetsel(char *str) {
-	/* register the selection for both the clipboard and the primary */
-	Atom clipboard;
-
+	/* register the selection for the clipboard */
 	free(sel.clip);
 	sel.clip = str;
 
-	XSetSelectionOwner(xw.dpy, XA_PRIMARY, xw.win, CurrentTime);
-
-	clipboard = XInternAtom(xw.dpy, "CLIPBOARD", 0);
-	XSetSelectionOwner(xw.dpy, clipboard, xw.win, CurrentTime);
+	Atom XA_CLIPBOARD = XInternAtom(xw.dpy, "CLIPBOARD", 0);
+	XSetSelectionOwner(xw.dpy, XA_CLIPBOARD, xw.win, CurrentTime);
 
 	XFlush(xw.dpy);
 }
