@@ -1647,17 +1647,6 @@ xloadcols(void) {
 	XRenderColor xft_color = { .alpha = 0 };
 	ulong white = WhitePixel(xw.dpy, xw.scr);
 
-	/* load colors [0-15] colors and [256-LEN(colorname)[ (config.h) */
-	for(i = 0; i < LEN(colorname); i++) {
-		if(!colorname[i])
-			continue;
-		if(!XftColorAllocName(xw.dpy, xw.vis, xw.cmap, colorname[i], &dc.xft_col[i])) {
-			dc.col[i] = white;
-			fprintf(stderr, "Could not allocate color '%s'\n", colorname[i]);
-		} else
-			dc.col[i] = dc.xft_col[i].pixel;
-	}
-
 	/* load colors [16-255] ; same colors as xterm */
 	for(i = 16, r = 0; r < 6; r++)
 		for(g = 0; g < 6; g++)
@@ -1679,6 +1668,17 @@ xloadcols(void) {
 		if(!XftColorAllocValue(xw.dpy, xw.vis, xw.cmap, &xft_color, &dc.xft_col[i])) {
 			dc.col[i] = white;
 			fprintf(stderr, "Could not allocate color %d\n", i);
+		} else
+			dc.col[i] = dc.xft_col[i].pixel;
+	}
+
+	/* load colors [0-15] colors and [256-LEN(colorname)[ (config.h) */
+	for(i = 0; i < LEN(colorname); i++) {
+		if(!colorname[i])
+			continue;
+		if(!XftColorAllocName(xw.dpy, xw.vis, xw.cmap, colorname[i], &dc.xft_col[i])) {
+			dc.col[i] = white;
+			fprintf(stderr, "Could not allocate color '%s'\n", colorname[i]);
 		} else
 			dc.col[i] = dc.xft_col[i].pixel;
 	}
